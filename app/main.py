@@ -42,6 +42,20 @@ def get_orders(to_currency: Optional[str] = None):
         orders = [dict(row) for row in cursor.fetchall()]
     return orders
 
+@app.get("/orders/{order_id}", response_model=models.Order)
+def get_order(order_id: int, to_currency: Optional[str] = None):
+    """Get order by ID """
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM orders WHERE id = ?", (order_id,))
+        existing_order = cursor.fetchone()
+
+    if existing_order is None:
+        raise HTTPException(status_code=404, detail="Order is not found")
+    
+    result = dict(existing_order)
+    return result
+
 @app.put("/orders/{order_id}", response_model=models.Order)
 def update_order(order_id: int, order_update: models.OrderUpdate):
     """Update exist order"""
