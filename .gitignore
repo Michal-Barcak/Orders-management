@@ -1,1 +1,10 @@
-venv
+# Database
+*.db
+database.db
+
+# Python cache files
+__pycache__/
+
+
+# Virtual environment
+venv/
