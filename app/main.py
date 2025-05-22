@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from .database import init_db, get_db_connection
 from . import models
+from typing import Optional, List
 
 
 init_db()
@@ -31,4 +32,12 @@ def create_order(order: models.OrderCreate):
         result = dict(cursor.fetchone())
 
     return result
-          
+
+@app.get("/orders", response_model=List[models.Order])
+def get_orders(to_currency: Optional[str] = None):
+    """Get all orders from database"""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM orders")
+        orders = [dict(row) for row in cursor.fetchall()]
+    return orders
