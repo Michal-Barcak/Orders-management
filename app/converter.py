@@ -54,7 +54,7 @@ def convert_currency(price: float, from_currency: str, to_currency: str) -> floa
         else:
             result = base_price / rates[to_currency]
             
-        return round(result, 2)
+        return round(result, 3)
     
     except Exception as e:
         raise HTTPException(

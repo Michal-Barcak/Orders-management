@@ -20,7 +20,7 @@ def create_order(order: models.OrderCreate):
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO orders (customer_name, price, currency) VALUES (?,?,?)",
-            (order.customer_name, order.price, order.currency)
+            (order.customer_name, order.price, order.currency.value)
         )
         conn.commit()
         order_id = cursor.lastrowid
@@ -80,7 +80,7 @@ def update_order(order_id: int, order_update: models.OrderUpdate):
         cursor = conn.cursor()
         cursor.execute(
             "UPDATE orders SET customer_name = ?, price = ?, currency = ? WHERE id = ?",
-            (order_update.customer_name, order_update.price, order_update.currency, order_id)
+            (order_update.customer_name, order_update.price, order_update.currency.value, order_id)
         )
         conn.commit()
 
