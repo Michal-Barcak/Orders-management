@@ -30,3 +30,13 @@ class OrderCreate(OrderBase):
 class Order(OrderBase):
     id: int
 
+class OrderUpdate(OrderBase):
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "customer_name": "John Doe",
+                "price": 99.99,
+                "currency": "CZK"
+            }
+        }
+    }
