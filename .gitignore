@@ -1,10 +1,10 @@
-# Databáza
+# Database
 *.db
 database.db
 
-# Python cache súbory
+# Python cache files
 __pycache__/
 
 
-# Virtuálne prostredie
+# Virtual environment
 venv/

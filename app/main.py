@@ -2,12 +2,12 @@ from fastapi import FastAPI, HTTPException
 from .database import init_db, get_db_connection
 from . import models
 from typing import Optional, List
-
+from .converter import convert_currency
+from .models import Currency
 
 init_db()
 
 app = FastAPI(title="Order Management API", version="1.0.0")
-
 
 @app.get("/")
 def root():
@@ -43,7 +43,7 @@ def get_orders(to_currency: Optional[str] = None):
     return orders
 
 @app.get("/orders/{order_id}", response_model=models.Order)
-def get_order(order_id: int, to_currency: Optional[str] = None):
+def get_order(order_id: int, to_currency: Optional[Currency] = None):
     """Get order by ID """
     with get_db_connection() as conn:
         cursor = conn.cursor()
@@ -54,6 +54,15 @@ def get_order(order_id: int, to_currency: Optional[str] = None):
         raise HTTPException(status_code=404, detail="Order is not found")
     
     result = dict(existing_order)
+
+    if to_currency:
+        result["price"] = convert_currency(
+            result["price"],
+            result["currency"],
+            to_currency.value
+        )
+        result["currency"] = to_currency.value
+
     return result
 
 @app.put("/orders/{order_id}", response_model=models.Order)

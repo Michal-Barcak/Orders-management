@@ -1,5 +1,11 @@
-from typing import Optional
 from pydantic import BaseModel, Field, field_validator
+from enum import Enum
+
+class Currency(str, Enum):
+    """Supported currencies"""
+    CZK = "CZK"
+    USD = "USD"
+    EUR = "EUR"
 
 class OrderBase(BaseModel):
     customer_name: str = Field(..., min_length=1)
