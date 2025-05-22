@@ -1,1 +1,10 @@
-venv
+# Databáza
+*.db
+database.db
+
+# Python cache súbory
+__pycache__/
+
+
+# Virtuálne prostredie
+venv/
