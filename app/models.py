@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 from enum import Enum
+from decimal import Decimal
 
 class Currency(str, Enum):
     """Supported currencies"""
@@ -15,7 +16,11 @@ class OrderBase(BaseModel):
     @field_validator('price')
     @classmethod
     def round_price(cls, price):
-        return round(price, 3)
+        decimal_price = Decimal(str(price))
+        decimal_places = abs(decimal_price.as_tuple().exponent)
+        if decimal_places > 3:
+            return float(round(price, 3))
+        return float(price)
     
     @field_validator('customer_name')
     @classmethod

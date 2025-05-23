@@ -1,10 +1,31 @@
 # Database
-*.db
 database.db
 
-# Python cache files
+# Docker runtime súbory
+.env
+
+# Python
 __pycache__/
-
-
-# Virtual environment
+*.pyc
+*.pyo
+*.pyd
 venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Testing
+.pytest_cache/
+.coverage

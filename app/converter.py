@@ -1,6 +1,5 @@
 import csv
 import requests
-# from functools import lru_cache
 from typing import Dict
 from fastapi import HTTPException
 from .models import Currency
@@ -12,7 +11,6 @@ DEFAULT_RATES = {
     Currency.EUR.value: 25.0
 }
 
-# @lru_cache(maxsize=1)
 def get_exchange_rates() -> Dict[str, float]:
     """Get actual currency rates from CNB or default rates."""
     rates = DEFAULT_RATES.copy()
@@ -35,24 +33,27 @@ def get_exchange_rates() -> Dict[str, float]:
     
     return rates
 
-def convert_currency(price: float, from_currency: str, to_currency: str) -> float:
+def convert_currency(order_price: float, from_currency: str, to_currency: str) -> float:
     """
-    Convert currency from one to another.
+    Function for converting currency from one to another.
     """
-    if not to_currency or from_currency == to_currency:
-        return price
+    if from_currency == to_currency:
+        return order_price
     
     try:
         rates = get_exchange_rates()
-        
-        base_price = price
+
+        base_price = order_price
+        #  If source currency is not CZK (BASE_CURRENCY), convert it to CZK first
         if from_currency != BASE_CURRENCY:
-            base_price = price * rates[from_currency]
+            base_price = order_price * rates[from_currency]
         
         if to_currency == BASE_CURRENCY:
             result = base_price
-        else:
+        elif to_currency in rates:
             result = base_price / rates[to_currency]
+        else:
+            raise ValueError(f"Unsupported currency: {to_currency}")
             
         return round(result, 3)
     
