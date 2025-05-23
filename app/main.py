@@ -13,7 +13,7 @@ app = FastAPI(title="Order Management API", version="1.0.0")
 def root():
     return {"message": "Order Management"}
 
-@app.post("/orders", response_model=models.Order, status_code=201)
+@app.post("/orders", response_model=models.Order)
 def create_order(order: models.OrderCreate):
     """Create new order"""
     with get_db_connection() as conn:
@@ -34,12 +34,22 @@ def create_order(order: models.OrderCreate):
     return result
 
 @app.get("/orders", response_model=List[models.Order])
-def get_orders(to_currency: Optional[str] = None):
+def get_orders(to_currency: Optional[Currency] = None):
     """Get all orders from database"""
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM orders")
         orders = [dict(row) for row in cursor.fetchall()]
+
+    if to_currency:
+        for order in orders:
+            order["price"] = convert_currency(
+                order_price=order["price"],
+                from_currency=order["currency"],
+                to_currency=to_currency
+            )
+            order["currency"] = to_currency.value
+
     return orders
 
 @app.get("/orders/{order_id}", response_model=models.Order)
@@ -57,9 +67,9 @@ def get_order(order_id: int, to_currency: Optional[Currency] = None):
 
     if to_currency:
         result["price"] = convert_currency(
-            result["price"],
-            result["currency"],
-            to_currency.value
+            order_price=result["price"],
+            from_currency=result["currency"],
+            to_currency=to_currency.value
         )
         result["currency"] = to_currency.value
 
